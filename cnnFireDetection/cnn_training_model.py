@@ -4,6 +4,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras.callbacks import TensorBoard
 
 import numpy as np
 import pickle
@@ -15,10 +16,12 @@ import pickle
 class cnnFireDetectionModel(object):
     def __init__(self):
         super().__init__()
+        self.NAME = "Fire-vs-Tree-CNN"
+        self.tensorboard = TensorBoard(log_dir="logs\{}".format(self.NAME))
         
     def runModel (self, X, y):
         X = X/ 255.0
-        y = np.array(y)
+        y = np.array(y) # Need to move to step to other file
 
         model = Sequential()
 
@@ -31,8 +34,8 @@ class cnnFireDetectionModel(object):
         model.add(MaxPooling2D(pool_size=(2, 2)))
 
         model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
-
         model.add(Dense(64))
+        model.add(Activation('relu'))
 
         model.add(Dense(1))
         model.add(Activation('sigmoid'))
@@ -41,4 +44,4 @@ class cnnFireDetectionModel(object):
                     optimizer='adam',
                     metrics=['accuracy'])
 
-        model.fit(X, y, batch_size=32, epochs=15, validation_split=0.3)
+        model.fit(X, y, batch_size=32, epochs=15, validation_split=0.3, callbacks=[self.tensorboard])
