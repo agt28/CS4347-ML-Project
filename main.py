@@ -9,6 +9,6 @@ if __name__== "__main__":
 
   # Train Model
   X, y = data.loadData()
-  model.runModel(X,y)
+  model.runModelOpt(X,y)
 
 
